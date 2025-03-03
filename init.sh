@@ -1,15 +1,13 @@
 #!/bin/bash
 # Install node
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 . $HOME/.nvm/nvm.sh
-# nvm install 'lts/*'
-nvm install '18'
+nvm install '20'
+npm i -g npm
 npm i -g yarn
 
 git clone https://github.com/hecerinc/dotfiles.git
 bash $HOME/dotfiles/install.sh
-# curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-# curl -fLo ~/.vimrc https://gist.githubusercontent.com/hecerinc/883c894c6cddd6af224d14376d341ce8/raw/9eff85ff1a441d5970399307591c82d653b711de/.vimrc
 vim +'PlugInstall --sync' +qa
 
 
@@ -26,12 +24,17 @@ echo 'export PATH=/home/hector/.local/bin:$PATH' >> ~/.zshrc
 mkdir -p $HOME/.downloads
 cd $HOME/.downloads
 sudo rm -rf /opt/nvim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-tar -xvzf nvim-linux64.tar.gz
-ln -s $HOME/.downloads/nvim-linux64/bin/nvim $HOME/.local/bin/nvim
+NVIM_DEST='nvim-linux-x86_64'
+curl -LO "https://github.com/neovim/neovim/releases/latest/download/$NVIM_DEST.tar.gz"
+
+tar -xvzf "$NVIM_DEST.tar.gz"
+ln -s "$HOME/.downloads/$NVIM_DEST/bin/nvim" $HOME/.local/bin/nvim
 
 mkdir -p $HOME/.config/nvim
 cp $HOME/dotfiles/nvim/* $HOME/.config/nvim/
 DEST=$HOME/.config/nvim
 ln -s $HOME/.vim/autoload $DEST/autoload
 ln -s $HOME/.vim/plugged $DEST/plugged
+
+# Use a local file to store git credentials so we don't have to repeatedly paste them
+git config --global credential.helper store
